@@ -36,6 +36,7 @@ import edu.ucr.cs.riple.core.registries.method.MethodRecord;
 import edu.ucr.cs.riple.core.registries.region.FieldRegionRegistry;
 import edu.ucr.cs.riple.core.registries.region.MethodRegionRegistry;
 import edu.ucr.cs.riple.injector.changes.AddMarkerAnnotation;
+import edu.ucr.cs.riple.injector.changes.AddTypeUseMarkerAnnotation;
 import edu.ucr.cs.riple.injector.location.Location;
 import java.util.Collection;
 import java.util.HashMap;
@@ -122,7 +123,7 @@ public class DownstreamImpactCacheImpl
             .stream()
             .map(
                 location ->
-                    new Fix(new AddMarkerAnnotation(location, context.config.nullableAnnot)))
+                    new Fix(new AddTypeUseMarkerAnnotation(location, context.config.nullableAnnot)))
             .collect(ImmutableSet.toImmutableSet());
     DownstreamImpactEvaluator evaluator = new DownstreamImpactEvaluator(supplier);
     ImmutableSet<Report> reports = evaluator.evaluate(fixes);

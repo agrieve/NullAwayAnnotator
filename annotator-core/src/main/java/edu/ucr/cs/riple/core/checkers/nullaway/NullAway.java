@@ -40,6 +40,7 @@ import edu.ucr.cs.riple.injector.Printer;
 import edu.ucr.cs.riple.injector.changes.AddAnnotation;
 import edu.ucr.cs.riple.injector.changes.AddMarkerAnnotation;
 import edu.ucr.cs.riple.injector.changes.AddSingleElementAnnotation;
+import edu.ucr.cs.riple.injector.changes.AddTypeUseMarkerAnnotation;
 import edu.ucr.cs.riple.injector.location.Location;
 import edu.ucr.cs.riple.injector.location.OnField;
 import edu.ucr.cs.riple.injector.location.OnParameter;
@@ -133,7 +134,7 @@ public class NullAway extends CheckerBaseClass<NullAwayError> {
     Set<AddAnnotation> annotations =
         nonnullTarget == null
             ? Set.of()
-            : Set.of(new AddMarkerAnnotation(nonnullTarget, config.nullableAnnot));
+            : Set.of(new AddTypeUseMarkerAnnotation(nonnullTarget, config.nullableAnnot));
     return createError(
         errorType,
         errorMessage,
@@ -207,7 +208,7 @@ public class NullAway extends CheckerBaseClass<NullAwayError> {
               if (locationOnField == null) {
                 return null;
               }
-              return new AddMarkerAnnotation(
+              return new AddTypeUseMarkerAnnotation(
                   extendVariableList(locationOnField, module), config.nullableAnnot);
             })
         .filter(Objects::nonNull)
