@@ -337,6 +337,7 @@ public class NullAway extends CheckerBaseClass<NullAwayError> {
                         fix.toField(), "SuppressWarnings", "NullAway.Init", false))
             .collect(Collectors.toSet());
     result.addAll(initializationSuppressWarningsAnnotations);
+
     injector.injectAnnotations(result);
     // update log
     context.log.updateInjectedAnnotations(result);
@@ -355,6 +356,18 @@ public class NullAway extends CheckerBaseClass<NullAwayError> {
     injector.injectAnnotations(nullUnMarkedAnnotations);
     // update log
     context.log.updateInjectedAnnotations(nullUnMarkedAnnotations);
+
+    // CHROME:Add @NullMarked
+    Set<AddAnnotation> nullMarkedAnnotations = new HashSet<>();
+    for (String clazz : context.targetModuleInfo.getFieldRegistry().allClasses()) {
+      if (!clazz.contains("$")) {
+        nullMarkedAnnotations.add(new AddMarkerAnnotation(
+            context.targetModuleInfo.getLocationOnClass(clazz),
+            "org.chromium.build.annotations.NullMarked", "NullUnmarked"
+        ));
+      }
+    }
+    injector.injectAnnotations(nullMarkedAnnotations);
   }
 
   @Override

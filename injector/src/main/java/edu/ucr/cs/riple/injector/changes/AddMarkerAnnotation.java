@@ -41,8 +41,15 @@ import javax.annotation.Nullable;
  */
 public class AddMarkerAnnotation extends AnnotationChange implements AddAnnotation {
 
+  private @Nullable String otherSimpleName;
+
   public AddMarkerAnnotation(Location location, String annotation) {
     super(location, new Name(annotation));
+  }
+
+  public AddMarkerAnnotation(Location location, String annotation, String otherSimpleName) {
+    super(location, new Name(annotation));
+    this.otherSimpleName = otherSimpleName;
   }
 
   @Override
@@ -59,6 +66,10 @@ public class AddMarkerAnnotation extends AnnotationChange implements AddAnnotati
     if (TypeUtils.isAnnotatedWith(node, annotationExpr)) {
       return null;
     }
+    if (otherSimpleName != null &&TypeUtils.isAnnotatedWith(node, new MarkerAnnotationExpr(otherSimpleName))) {
+      return null;
+    }
+
     return new Insertion(annotationExpr.toString(), range.begin);
   }
 
@@ -76,16 +87,16 @@ public class AddMarkerAnnotation extends AnnotationChange implements AddAnnotati
       return false;
     }
     AddMarkerAnnotation that = (AddMarkerAnnotation) o;
-    return location.equals(that.location) && annotationName.equals(that.annotationName);
+    return location.equals(that.location) && annotationName.equals(that.annotationName) && Objects.equals(otherSimpleName, that.otherSimpleName);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(AddMarkerAnnotation.class, location, annotationName);
+    return Objects.hash(AddMarkerAnnotation.class, location, annotationName, otherSimpleName);
   }
 
   @Override
   public ASTChange copy() {
-    return new AddMarkerAnnotation(location, annotationName.fullName);
+    return new AddMarkerAnnotation(location, annotationName.fullName, otherSimpleName);
   }
 }
