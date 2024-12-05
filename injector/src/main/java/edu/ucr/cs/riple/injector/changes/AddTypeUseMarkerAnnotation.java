@@ -75,6 +75,12 @@ public class AddTypeUseMarkerAnnotation extends TypeUseAnnotationChange implemen
     boolean addOnDeclaration =
         typeIndex.stream().anyMatch(index -> index.size() == 1 && index.get(0) == 0);
     Type type = TypeUtils.getTypeFromNode(node);
+    // Seems to sometimes add @Nullable to primitive types. In particular:
+    // ../../base/android/java/src/org/chromium/base/BuildInfo.java:70: warning: [NullablePrimitive] Nullness annotations should not be used for primitive types since they cannot be null
+    //     public final @Nullable long hostVersionCode;
+    if (type.isPrimitiveType()) {
+      return null;
+    }
     // For annotation on fully qualified name or inner class, the annotation is on the type. (e.g.
     // Map.@Annot Entry or java.util.@Annot Map)
     if (addOnDeclaration) {
