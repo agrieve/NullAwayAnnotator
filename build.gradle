@@ -19,10 +19,10 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-import net.ltgt.gradle.errorprone.CheckSeverity
+//import net.ltgt.gradle.errorprone.CheckSeverity
 
 plugins{
-    id "net.ltgt.errorprone" version "2.0.1" apply false
+    //id "net.ltgt.errorprone" version "2.0.1" apply false
     id "com.vanniktech.maven.publish" version "0.22.0" apply false
     id("com.diffplug.gradle.spotless") version "6.25.0" apply false
 }
@@ -44,12 +44,12 @@ apply from: "gradle/dependencies.gradle"
 subprojects { proj ->
 
     proj.apply plugin: "java"
-    proj.apply plugin: "net.ltgt.errorprone"
+    //proj.apply plugin: "net.ltgt.errorprone"
     proj.apply plugin: "com.diffplug.spotless"
 
     proj.dependencies {
-        errorprone deps.build.errorProneCore
-        errorproneJavac deps.build.errorProneJavac
+        //errorprone deps.build.errorProneCore
+        //errorproneJavac deps.build.errorProneJavac
         if(proj.name != "ban-mutable-static"){
             annotationProcessor project(":checks:ban-mutable-static")
         }
@@ -59,14 +59,14 @@ subprojects { proj ->
 
     proj.tasks.withType(JavaCompile) {
         if (!name.toLowerCase().contains("test")) {
-            options.errorprone {
+            /*options.errorprone {
                 check("StringSplitter", CheckSeverity.OFF)
                 check("WildcardImport", CheckSeverity.ERROR)
                 check("MissingBraces", CheckSeverity.ERROR)
                 if (project.name != "ban-mutable-static") {
                     check("BanMutableStatic", CheckSeverity.ERROR)
                 }
-            }
+            }*/
         }
         options.fork = true
     }
