@@ -48,7 +48,6 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 /**
@@ -278,9 +277,5 @@ public class FieldRegistry extends Registry<ClassFieldRecord> {
                     && node.hasExactFieldDeclarationWithNames(onField.variables),
             ClassFieldRecord.hash(location.clazz))
         != null;
-  }
-
-  public Set<String> allClasses() {
-    return contents.values().stream().map(node -> node.clazz).collect(Collectors.toSet());
   }
 }
