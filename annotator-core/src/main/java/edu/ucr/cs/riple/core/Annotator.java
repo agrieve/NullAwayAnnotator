@@ -35,6 +35,8 @@ import edu.ucr.cs.riple.core.evaluators.Evaluator;
 import edu.ucr.cs.riple.core.evaluators.VoidEvaluator;
 import edu.ucr.cs.riple.core.evaluators.suppliers.Supplier;
 import edu.ucr.cs.riple.core.evaluators.suppliers.TargetModuleSupplier;
+import edu.ucr.cs.riple.core.injectors.AnnotationInjector;
+import edu.ucr.cs.riple.core.injectors.PhysicalInjector;
 import edu.ucr.cs.riple.core.registries.index.Fix;
 import edu.ucr.cs.riple.core.util.Utility;
 import java.util.Set;
@@ -46,6 +48,9 @@ import java.util.stream.Stream;
  * corresponding annotations.
  */
 public class Annotator {
+
+  /** Injector instance. */
+  private final AnnotationInjector injector;
 
   /** Annotator context. */
   public final Context context;
@@ -60,6 +65,7 @@ public class Annotator {
     this.config = config;
     this.context = new Context(config);
     this.cache = new ReportCache(config);
+    this.injector = new PhysicalInjector(context);
   }
 
   /** Starts the annotating process consist of preprocess followed by the "annotate" phase. */
@@ -83,7 +89,7 @@ public class Annotator {
    */
   private void preprocess() {
     System.out.println("Preprocessing...");
-    context.checker.preprocess();
+    context.checker.preprocess(injector);
   }
 
   /** Performs iterations of inference/injection until no unseen fix is suggested. */
@@ -117,7 +123,7 @@ public class Annotator {
       }
     }
     if (config.suppressRemainingErrors) {
-      context.checker.suppressRemainingErrors();
+      context.checker.suppressRemainingErrors(injector);
     }
     System.out.println("\nFinished annotating.");
     Utility.writeReports(context, cache.reports().stream().collect(ImmutableSet.toImmutableSet()));
@@ -151,7 +157,7 @@ public class Annotator {
             .filter(Report::approved)
             .flatMap(report -> config.chain ? report.tree.stream() : Stream.of(report.root))
             .collect(Collectors.toSet());
-    context.getInjector().injectFixes(selectedFixes);
+    injector.injectFixes(selectedFixes);
     // Update log.
     context.log.updateInjectedAnnotations(
         selectedFixes.stream().flatMap(fix -> fix.changes.stream()).collect(Collectors.toSet()));

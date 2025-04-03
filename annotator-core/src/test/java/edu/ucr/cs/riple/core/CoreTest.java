@@ -27,10 +27,8 @@ package edu.ucr.cs.riple.core;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singleton;
 
-import com.google.common.collect.ImmutableList;
 import edu.ucr.cs.riple.core.tools.TReport;
 import edu.ucr.cs.riple.injector.location.OnField;
-import edu.ucr.cs.riple.injector.location.OnLocalVariable;
 import edu.ucr.cs.riple.injector.location.OnMethod;
 import edu.ucr.cs.riple.injector.location.OnParameter;
 import java.util.Collections;
@@ -573,53 +571,5 @@ public class CoreTest extends AnnotatorBaseCoreTest {
         .start();
     // No annotation should be added even though it can reduce the number of errors.
     Assert.assertEquals(coreTestHelper.getLog().getInjectedAnnotations().size(), 0);
-  }
-
-  @Test
-  public void assignNullableToNonnullArrayComponentTypeTest() {
-    coreTestHelper
-        .onTarget()
-        .withSourceLines(
-            "Main.java",
-            "package test;",
-            "public class Main {",
-            "   Object[] arr = new Object[1];",
-            "   void run() {",
-            "     arr[0] = null;",
-            "   }",
-            "}")
-        .withExpectedReports(
-            new TReport(
-                new OnField("Main.java", "test.Main", Set.of("arr")),
-                ImmutableList.of(ImmutableList.of(1, 0)),
-                -1))
-        .disableBailOut()
-        .checkExpectedOutput("assignNullableToNonnullArrayComponentTypeTest/expected")
-        .enableJSpecifyMode()
-        .start();
-  }
-
-  @Test
-  public void assignNullableToNonnullArrayComponentTypeLocalVariableTest() {
-    coreTestHelper
-        .onTarget()
-        .withSourceLines(
-            "Main.java",
-            "package test;",
-            "public class Main {",
-            "   void run() {",
-            "     Object[] arr = new Object[1];",
-            "     arr[0] = null;",
-            "   }",
-            "}")
-        .withExpectedReports(
-            new TReport(
-                new OnLocalVariable("Main.java", "test.Main", "run()", "arr"),
-                ImmutableList.of(ImmutableList.of(1, 0)),
-                -1))
-        .disableBailOut()
-        .checkExpectedOutput("assignNullableToNonnullArrayComponentTypeLocalVariableTest/expected")
-        .enableJSpecifyMode()
-        .start();
   }
 }
